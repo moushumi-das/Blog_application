@@ -11,6 +11,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json())
 const mongoose = require('mongoose');
 const authRouter=require('./routes/auth')
+const userRouter=require('./routes/user')
+
+//Database connection
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: true });
 const connection = mongoose.connection;
 connection.once('open', () => {
@@ -21,7 +24,7 @@ connection.once('open', () => {
 
 
 app.use('/api/auth',authRouter)
-
+app.use('/api/user',userRouter)
 
 
 app.listen(PORT, () => {
