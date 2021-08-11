@@ -14,6 +14,8 @@ const authRouter=require('./routes/auth')
 const userRouter=require('./routes/user')
 const postRouter=require('./routes/post')
 
+const CategoryRouter=require('./routes/category')
+
 //Database connection
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: true });
 const connection = mongoose.connection;
@@ -26,8 +28,8 @@ connection.once('open', () => {
 
 app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
-app.use('/api/post',postRouter)
-
+app.use('/api/blogpost',postRouter)
+app.use('/api/category',CategoryRouter)
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
