@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
     }
 });
  
-// update
+// update post
 router.put("/:id", async (req, res) => {
     try {
       const post = await Post.findById(req.params.id);
@@ -40,7 +40,7 @@ router.put("/:id", async (req, res) => {
       res.status(500).json(err);
     }
   }); 
-
+// Delete post
 router.delete("/:id", async(req,res)=>{
      try {
             const post = await Post.findById(req.params.id); 
@@ -69,7 +69,7 @@ router.get("/:id",async(req,res)=>{
      res.status(500).json(error)   
     }
 })
-
+// Find by category
 router.get("/", async (req, res) => {
     const username = req.query.user;
     const category = req.query.category;
