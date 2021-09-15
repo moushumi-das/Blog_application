@@ -15,7 +15,7 @@
     "license": "MIT",
     "devDependencies": {},
     "scripts": {
-        "start": "nodemon index.js"
+        "start": "node index.js"
     },
     "description": ""
 }
