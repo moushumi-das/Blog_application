@@ -90,11 +90,16 @@ export default function SinglePost() {
               </b>
             </Link>
           </span>
+          <span>
+            Category:
+              <Link to={`/?category=${blogPost.categories}`} className="link">
+              <b className="singlePostAuthor">
+                {blogPost.categories}
+              </b>
+            </Link>
+          </span>
           <span>   {new Date(blogPost.createdAt).toDateString()}</span>
         </div>
-
-
-
         {updateMode ? (
           <textarea
             className="singlePostDescInput"
