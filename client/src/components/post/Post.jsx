@@ -1,27 +1,40 @@
 import "./post.css"
+import { Link } from "react-router-dom";
 
-export default function Post() {
-    return (
-        <div className="post">
-         <img className="postImg" src="https://images.pexels.com/photos/1167355/pexels-photo-1167355.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"alt=""/>
+export default function Post({post}) {
+  const PF = "http://localhost:3000/images/";
+  return (
+    <div className="post">
+      { post.photo && (
+              <img 
+              className="postImg" 
+              src={PF+post.photo}
+               alt="" 
+               />
 
-          <div className="postDetails">
-              <div className="postCategories">
-                  <span className="postCategory"> Music</span>
-                  <span className="postCategory"> Life</span>
-              </div>
-              <span className="postTitle">
-               Quod ipsum fugiat asperiores laudantium libero 
-              </span>
-              <hr/>
-            <span className="postDate">2 hours ago</span>
-          </div>  
-          <p className="postDescription">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda
-        officia architecto deserunt deleniti? Labore ipsum aspernatur magnam
-        fugiat, reprehenderit praesentium blanditiis quos cupiditate ratione
-        atque, exercitationem quibusdam, reiciendis odio laboriosam?
-      </p>
+      )}
+
+      <div className="postDetails">
+        <div className="postCategories">
+          {post.categories.map((category, index)=>(
+          <span key={index} className="postCategory">
+              {category}</span>
+
+          ))}
+           
+          
         </div>
-    )
+       
+          <Link to={`blogpost/${post._id}`} className="link">
+          <span className="postTitle"> {post.title}</span>
+
+          </Link>
+        <hr />
+        <span className="postDate">{new Date(post.createdAt).toDateString()}</span>
+      </div>
+      <p className="postDescription">
+       {post.description}
+      </p>
+    </div>
+  )
 }

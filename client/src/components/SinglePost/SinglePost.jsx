@@ -1,61 +1,115 @@
 import "./SinglePost.css"
+import { useLocation } from "react-router";
+import { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+
+import { Context } from "../../context/Context";
+
+axios.defaults.baseURL = '/api/'
+
 
 export default function SinglePost() {
-    return (
-      <div className="singlePost">
-        <div className="singlePostWrapper">
-          <img
-            className="singlePostImg"
-            src="https://images.pexels.com/photos/6685428/pexels-photo-6685428.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-            alt=""
+  const location = useLocation()
+  const path = (location.pathname.split("/")[2]);
+
+  const [blogPost, setBlogPost] = useState({})
+  const PF = "http://localhost:3000/images/";
+  const { user } = useContext(Context);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [updateMode, setUpdateMode] = useState(false);
+
+  useEffect(() => {
+    const getBlogPost = async () => {
+      const response = await axios.get('blogposts/' + path)
+      console.log(response)
+      setBlogPost(response.data)
+      setTitle(response.data.title)
+      setDescription(response.data.description)
+    }
+    getBlogPost()
+  }, [path])
+
+  const handleDeletePost = async () => {
+    try {
+      await axios.delete(`/blogposts/${blogPost._id}`, {
+        data: { username: user.username },
+      });
+      window.location.replace("/")
+    } catch (error) {
+
+    }
+  };
+  const handleUpdatePost = async () => {
+    try {
+      await axios.put(`/blogposts/${blogPost._id}`, {
+        
+          username: user.username,
+          title,
+          description,
+
+        
+      });
+      setUpdateMode(false)
+
+    } catch (error) {
+
+    }
+  };
+  return (
+    <div className="singlePost">
+      <div className="singlePostWrapper">
+        {blogPost.photo && (<img
+          className="singlePostImg"
+          src={PF + blogPost.photo} alt="" />
+        )}
+        {updateMode ? (
+          <input
+            type="text"
+            value={title}
+            className="singlePostTitleInput"
+            autoFocus
+            onChange={(e) => setTitle(e.target.value)}
           />
+        ) : (
           <h1 className="singlePostTitle">
-            Lorem ipsum dolor
-            <div className="singlePostEdit">
-              <i className="singlePostIcon far fa-edit"></i>
-              <i className="singlePostIcon far fa-trash-alt"></i>
-            </div>
-          </h1>
-          <div className="singlePostInfo">
-            <span>
-              Author:
+            {title}
+            {blogPost.username === user?.username && (<div className="singlePostEdit">
+              <i className="singlePostIcon far fa-edit" onClick={() => setUpdateMode(true)}></i>
+              <i className="singlePostIcon far fa-trash-alt" onClick={handleDeletePost}></i>
+            </div>)}
+
+          </h1>)}
+        <div className="singlePostInfo">
+          <span>
+            Author:
+              <Link to={`/?user=${blogPost.username}`} className="link">
               <b className="singlePostAuthor">
-               
+                {blogPost.username}
               </b>
-            </span>
-            <span>1 day ago</span>
-          </div>
-          <p className="singlePostDesc">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste error
-            quibusdam ipsa quis quidem doloribus eos, dolore ea iusto impedit!
-            Voluptatum necessitatibus eum beatae, adipisci voluptas a odit modi
-            eos! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste
-            error quibusdam ipsa quis quidem doloribus eos, dolore ea iusto
-            impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas a
-            odit modi eos! Lorem, ipsum dolor sit amet consectetur adipisicing
-            elit. Iste error quibusdam ipsa quis quidem doloribus eos, dolore ea
-            iusto impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas
-            a odit modi eos! Lorem, ipsum dolor sit amet consectetur adipisicing
-            elit. Iste error quibusdam ipsa quis quidem doloribus eos, dolore ea
-            iusto impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas
-            a odit modi eos! Lorem, ipsum dolor sit amet consectetur adipisicing
-            elit. Iste error quibusdam ipsa quis quidem doloribus eos, dolore ea
-            iusto impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas
-            a odit modi eos!
-            <br />
-            <br />
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste error
-            quibusdam ipsa quis quidem doloribus eos, dolore ea iusto impedit!
-            Voluptatum necessitatibus eum beatae, adipisci voluptas a odit modi
-            eos! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste
-            error quibusdam ipsa quis quidem doloribus eos, dolore ea iusto
-            impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas a
-            odit modi eos! Lorem, ipsum dolor sit amet consectetur adipisicing
-            elit. Iste error quibusdam ipsa quis quidem doloribus eos, dolore ea
-            iusto impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas
-            a odit modi eos! Lorem, ipsum dolor sit amet consectetur.
-          </p>
+            </Link>
+          </span>
+          <span>   {new Date(blogPost.createdAt).toDateString()}</span>
         </div>
+
+
+
+        {updateMode ? (
+          <textarea
+            className="singlePostDescInput"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        ) : (
+          <p className="singlePostDesc">{description}</p>
+        )}
+        {updateMode && (
+          <button className="singlePostButton" onClick={handleUpdatePost}>
+            Update
+          </button>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
+}
